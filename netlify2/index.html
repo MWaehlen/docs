@@ -334,8 +334,8 @@
 
       try {
         // Ruft die Netlify Function auf (kein API-Key im Browser!)
-        const res = await fetch('/.netlify/functions/chat', {
-      //  const res  = await fetch('/api/chat', {
+        const res = await fetch('/netlify/functions/chat', {
+        // const res  = await fetch('/api/chat', {
           method:  'POST',
           headers: { 'Content-Type': 'application/json' },
           body:    JSON.stringify({ message: text }),
