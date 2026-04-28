@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Watchsport – Dein intelligenter Assistent</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --brand:       #4f46e5;
+      --brand-dark:  #3730a3;
+      --brand-light: #eef2ff;
+      --accent:      #06b6d4;
+      --text-main:   #111827;
+      --text-muted:  #6b7280;
+      --bg:          #f9fafb;
+      --white:       #ffffff;
+      --radius:      12px;
+      --shadow:      0 4px 24px rgba(0,0,0,.10);
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter','Segoe UI',sans-serif; background: var(--bg); color: var(--text-main); line-height: 1.6; }
+
+    /* NAV */
+    nav { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,.88); backdrop-filter: blur(12px); border-bottom: 1px solid #e5e7eb; padding: 0 5%; display: flex; align-items: center; justify-content: space-between; height: 64px; }
+    .nav-logo { font-size: 1.4rem; font-weight: 800; color: var(--brand); text-decoration: none; letter-spacing: -.5px; }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a { text-decoration: none; color: var(--text-muted); font-weight: 500; transition: color .2s; }
+    .nav-links a:hover { color: var(--brand); }
+    .nav-cta { background: var(--brand); color: var(--white) !important; padding: .45rem 1.1rem; border-radius: 8px; font-weight: 600 !important; transition: background .2s !important; }
+    .nav-cta:hover { background: var(--brand-dark) !important; }
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 4px; }
+    .hamburger span { display: block; width: 24px; height: 2px; background: var(--text-main); border-radius: 2px; }
+
+    /* HERO */
+    .hero { min-height: 92vh; display: flex; align-items: center; justify-content: center; text-align: center; padding: 6rem 5% 4rem; background: linear-gradient(135deg,#eef2ff 0%,#f0f9ff 60%,#e0f2fe 100%); position: relative; overflow: hidden; }
+    .hero::before { content:''; position: absolute; inset: 0; background: radial-gradient(circle at 20% 50%,rgba(79,70,229,.12) 0%,transparent 55%), radial-gradient(circle at 80% 20%,rgba(6,182,212,.10) 0%,transparent 45%); }
+    .hero-inner { position: relative; max-width: 760px; }
+    .hero-badge { display: inline-block; background: var(--brand-light); color: var(--brand); font-size: .8rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: .35rem 1rem; border-radius: 99px; margin-bottom: 1.5rem; border: 1px solid rgba(79,70,229,.25); }
+    .hero h1 { font-size: clamp(2.2rem,5vw,3.6rem); font-weight: 900; line-height: 1.15; letter-spacing: -.02em; margin-bottom: 1.2rem; }
+    .hero h1 span { color: var(--brand); }
+    .hero p { font-size: 1.15rem; color: var(--text-muted); max-width: 540px; margin: 0 auto 2.5rem; }
+    .hero-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .btn-primary { background: var(--brand); color: var(--white); padding: .75rem 2rem; border-radius: var(--radius); font-size: 1rem; font-weight: 700; text-decoration: none; transition: background .2s,transform .15s; display: inline-block; box-shadow: 0 4px 14px rgba(79,70,229,.35); }
+    .btn-primary:hover { background: var(--brand-dark); transform: translateY(-2px); }
+    .btn-outline { background: var(--white); color: var(--brand); border: 2px solid var(--brand); padding: .75rem 2rem; border-radius: var(--radius); font-size: 1rem; font-weight: 700; text-decoration: none; transition: background .2s,color .2s,transform .15s; display: inline-block; }
+    .btn-outline:hover { background: var(--brand); color: var(--white); transform: translateY(-2px); }
+
+    /* FEATURES */
+    .features { padding: 6rem 5%; max-width: 1100px; margin: 0 auto; }
+    .section-label { text-align: center; font-size: .8rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--brand); margin-bottom: .75rem; }
+    .section-title { text-align: center; font-size: clamp(1.7rem,3.5vw,2.5rem); font-weight: 800; margin-bottom: 1rem; }
+    .section-sub { text-align: center; color: var(--text-muted); max-width: 520px; margin: 0 auto 3.5rem; }
+    .cards { display: grid; grid-template-columns: repeat(auto-fit,minmax(260px,1fr)); gap: 1.5rem; }
+    .card { background: var(--white); border-radius: var(--radius); padding: 2rem; box-shadow: var(--shadow); transition: transform .2s,box-shadow .2s; border: 1px solid #e5e7eb; }
+    .card:hover { transform: translateY(-4px); box-shadow: 0 10px 32px rgba(0,0,0,.13); }
+    .card-icon { font-size: 2rem; margin-bottom: 1rem; }
+    .card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: .5rem; }
+    .card p { color: var(--text-muted); font-size: .9rem; }
+
+    /* HOW IT WORKS */
+    .steps-section { background: linear-gradient(135deg,#4f46e5 0%,#06b6d4 100%); padding: 6rem 5%; color: var(--white); }
+    .steps-section .section-label { color: rgba(255,255,255,.7); }
+    .steps-section .section-title { color: var(--white); }
+    .steps-section .section-sub { color: rgba(255,255,255,.75); }
+    .steps { display: grid; grid-template-columns: repeat(auto-fit,minmax(200px,1fr)); gap: 2rem; max-width: 1000px; margin: 0 auto; }
+    .step { background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.2); border-radius: var(--radius); padding: 2rem; text-align: center; backdrop-filter: blur(6px); }
+    .step-num { width: 44px; height: 44px; border-radius: 50%; background: rgba(255,255,255,.25); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.1rem; margin: 0 auto 1rem; border: 2px solid rgba(255,255,255,.4); }
+    .step h3 { font-size: 1rem; font-weight: 700; margin-bottom: .4rem; }
+    .step p { font-size: .875rem; opacity: .85; }
+
+    /* TESTIMONIALS */
+    .testimonials { padding: 6rem 5%; max-width: 1100px; margin: 0 auto; }
+    .testi-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(280px,1fr)); gap: 1.5rem; }
+    .testi-card { background: var(--white); border-radius: var(--radius); padding: 1.75rem; border: 1px solid #e5e7eb; box-shadow: var(--shadow); }
+    .testi-stars { color: #fbbf24; font-size: 1rem; margin-bottom: .75rem; }
+    .testi-text { font-size: .95rem; color: var(--text-main); line-height: 1.65; margin-bottom: 1.25rem; }
+    .testi-author { display: flex; align-items: center; gap: .75rem; }
+    .testi-avatar { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg,var(--brand),var(--accent)); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: .9rem; flex-shrink: 0; }
+    .testi-name { font-weight: 700; font-size: .9rem; }
+    .testi-role { font-size: .78rem; color: var(--text-muted); }
+
+    /* CTA */
+    .cta-banner { background: var(--brand-light); border-top: 1px solid #e0e7ff; border-bottom: 1px solid #e0e7ff; text-align: center; padding: 5rem 5%; }
+    .cta-banner h2 { font-size: clamp(1.6rem,3.5vw,2.4rem); font-weight: 800; margin-bottom: 1rem; }
+    .cta-banner p { color: var(--text-muted); max-width: 480px; margin: 0 auto 2rem; }
+
+    /* FOOTER */
+    footer { background: var(--text-main); color: rgba(255,255,255,.6); text-align: center; padding: 2rem 5%; font-size: .85rem; }
+    footer a { color: rgba(255,255,255,.8); text-decoration: none; }
+    footer a:hover { color: var(--white); }
+
+    /* CHAT WIDGET */
+    #chat-toggle { position: fixed; bottom: 28px; right: 28px; z-index: 1000; width: 58px; height: 58px; border-radius: 50%; background: var(--brand); border: none; cursor: pointer; box-shadow: 0 6px 24px rgba(79,70,229,.45); display: flex; align-items: center; justify-content: center; transition: background .2s,transform .2s; }
+    #chat-toggle:hover { background: var(--brand-dark); transform: scale(1.08); }
+    #chat-toggle svg { width: 26px; height: 26px; fill: white; }
+    .chat-badge { position: absolute; top: -4px; right: -4px; background: #ef4444; color: white; border-radius: 50%; width: 18px; height: 18px; font-size: .65rem; font-weight: 700; display: flex; align-items: center; justify-content: center; border: 2px solid white; }
+
+    #chat-box { position: fixed; bottom: 100px; right: 28px; z-index: 1000; width: 370px; max-width: calc(100vw - 40px); background: var(--white); border-radius: 18px; box-shadow: 0 16px 56px rgba(0,0,0,.18); display: flex; flex-direction: column; overflow: hidden; border: 1px solid #e5e7eb; transform: scale(.92) translateY(20px); opacity: 0; pointer-events: none; transition: transform .25s cubic-bezier(.34,1.56,.64,1),opacity .2s; }
+    #chat-box.open { transform: scale(1) translateY(0); opacity: 1; pointer-events: auto; }
+
+    .chat-header { background: linear-gradient(135deg,var(--brand) 0%,var(--brand-dark) 100%); color: white; padding: 1rem 1.25rem; display: flex; align-items: center; gap: .75rem; }
+    .chat-header-avatar { width: 36px; height: 36px; background: rgba(255,255,255,.25); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
+    .chat-header-info { flex: 1; }
+    .chat-header-name { font-weight: 700; font-size: .95rem; }
+    .chat-status { display: flex; align-items: center; gap: .35rem; font-size: .75rem; opacity: .85; }
+    .status-dot { width: 7px; height: 7px; background: #4ade80; border-radius: 50%; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1}50%{opacity:.4} }
+    .chat-close { background: none; border: none; color: rgba(255,255,255,.8); cursor: pointer; font-size: 1.3rem; line-height: 1; padding: 0 4px; transition: color .2s; }
+    .chat-close:hover { color: white; }
+
+    .chat-messages { flex: 1; overflow-y: auto; padding: 1rem; display: flex; flex-direction: column; gap: .75rem; min-height: 300px; max-height: 380px; background: #f8fafc; }
+    .chat-messages::-webkit-scrollbar { width: 4px; }
+    .chat-messages::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 4px; }
+
+    .msg { display: flex; flex-direction: column; max-width: 80%; animation: msgIn .2s ease; }
+    @keyframes msgIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+    .msg.bot  { align-self: flex-start; }
+    .msg.user { align-self: flex-end; }
+    .msg-bubble { padding: .6rem .9rem; border-radius: 16px; font-size: .88rem; line-height: 1.55; word-break: break-word; white-space: pre-wrap; }
+    .msg.bot  .msg-bubble { background: var(--white); border: 1px solid #e5e7eb; border-bottom-left-radius: 4px; color: var(--text-main); box-shadow: 0 1px 4px rgba(0,0,0,.05); }
+    .msg.user .msg-bubble { background: var(--brand); color: white; border-bottom-right-radius: 4px; }
+    .msg-time { font-size: .67rem; color: var(--text-muted); margin-top: .25rem; padding: 0 .2rem; }
+    .msg.user .msg-time { text-align: right; }
+
+    .typing-indicator .msg-bubble { display: flex; align-items: center; gap: 4px; padding: .7rem 1rem; }
+    .typing-dot { width: 7px; height: 7px; background: #9ca3af; border-radius: 50%; animation: typingBounce 1.2s infinite; }
+    .typing-dot:nth-child(2){animation-delay:.2s}
+    .typing-dot:nth-child(3){animation-delay:.4s}
+    @keyframes typingBounce { 0%,80%,100%{transform:translateY(0);opacity:.5}40%{transform:translateY(-5px);opacity:1} }
+
+    .chat-footer { padding: .75rem 1rem; border-top: 1px solid #e5e7eb; background: var(--white); }
+    .chat-input-row { display: flex; gap: .5rem; align-items: flex-end; }
+    #chat-input { flex: 1; border: 1.5px solid #d1d5db; border-radius: 12px; padding: .55rem .85rem; font-size: .9rem; font-family: inherit; resize: none; outline: none; transition: border-color .2s; max-height: 100px; line-height: 1.45; overflow-y: auto; background: #f9fafb; }
+    #chat-input:focus { border-color: var(--brand); background: white; }
+    #chat-send { background: var(--brand); border: none; border-radius: 10px; width: 40px; height: 40px; flex-shrink: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background .2s,transform .15s; }
+    #chat-send:hover { background: var(--brand-dark); transform: scale(1.06); }
+    #chat-send:disabled { background: #d1d5db; cursor: not-allowed; transform: none; }
+    #chat-send svg { width: 18px; height: 18px; fill: white; }
+    .chat-disclaimer { text-align: center; font-size: .68rem; color: #9ca3af; margin-top: .5rem; }
+
+    @media (max-width: 700px) {
+      .nav-links { display: none; flex-direction: column; position: absolute; top: 64px; left: 0; right: 0; background: white; border-bottom: 1px solid #e5e7eb; padding: 1rem 5%; gap: 1rem; }
+      .nav-links.open { display: flex; }
+      .hamburger { display: flex; }
+      #chat-box { right: 16px; bottom: 88px; }
+      #chat-toggle { right: 16px; bottom: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a class="nav-logo" href="#">⚡ Watchsport</a>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#how">So funktionierts</a></li>
+      <li><a href="#testimonials">Bewertungen</a></li>
+      <li><a href="#contact" class="nav-cta">Jetzt starten</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger" aria-label="Menue">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-inner">
+      <span class="hero-badge">KI-gestuetzt · Jetzt verfuegbar</span>
+      <h1>Dein smarter Assistent –<br /><span>Immer fuer dich da.</span></h1>
+      <p>Stelle Fragen, erhalte sofortige Antworten und erledige mehr – mit unserem intelligenten KI-Agenten, direkt in deinem Browser.</p>
+      <div class="hero-buttons">
+        <a href="#features" class="btn-primary">Features entdecken</a>
+        <a href="#" class="btn-outline" id="open-chat-hero">Chat starten 💬</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="features" id="features">
+    <p class="section-label">Was wir bieten</p>
+    <h2 class="section-title">Alles, was du brauchst</h2>
+    <p class="section-sub">Eine vollstaendige Plattform mit modernster KI – einfach, schnell und sicher.</p>
+    <div class="cards">
+      <div class="card"><div class="card-icon">🧠</div><h3>Intelligente Antworten</h3><p>Unser KI-Agent versteht Kontext und liefert praezise, hilfreiche Antworten auf jede Frage.</p></div>
+      <div class="card"><div class="card-icon">⚡</div><h3>Blitzschnell</h3><p>Keine langen Wartezeiten – Antworten in Echtzeit dank modernster API-Infrastruktur.</p></div>
+      <div class="card"><div class="card-icon">🔐</div><h3>Sicher &amp; Datenschutzkonform</h3><p>API-Keys werden serverseitig verwaltet. Deine Daten verlassen das System nie unverschluesselt.</p></div>
+      <div class="card"><div class="card-icon">📱</div><h3>Ueberall verfuegbar</h3><p>Responsives Design – perfekt auf Desktop, Tablet und Smartphone nutzbar.</p></div>
+      <div class="card"><div class="card-icon">🔄</div><h3>Kontext-Gedaechtnis</h3><p>Der Agent merkt sich den Gespraechsverlauf und gibt konsistente, zusammenhaengende Antworten.</p></div>
+      <div class="card"><div class="card-icon">🎨</div><h3>Individuell anpassbar</h3><p>Passe das Widget, Farben und den Agent-Charakter ganz einfach an deine Marke an.</p></div>
+    </div>
+  </section>
+
+  <section class="steps-section" id="how">
+    <p class="section-label">Schritt fuer Schritt</p>
+    <h2 class="section-title">So einfach gehts</h2>
+    <p class="section-sub">In drei Schritten zur perfekten KI-Integration.</p>
+    <div class="steps">
+      <div class="step"><div class="step-num">1</div><h3>Chat oeffnen</h3><p>Klicke auf das Chat-Icon unten rechts, um das Widget zu oeffnen.</p></div>
+      <div class="step"><div class="step-num">2</div><h3>Frage stellen</h3><p>Schreibe deine Frage in das Eingabefeld und sende sie ab.</p></div>
+      <div class="step"><div class="step-num">3</div><h3>Antwort erhalten</h3><p>Der KI-Agent verarbeitet deine Anfrage und antwortet innerhalb von Sekunden.</p></div>
+    </div>
+  </section>
+
+  <section class="testimonials" id="testimonials">
+    <p class="section-label">Was Nutzer sagen</p>
+    <h2 class="section-title">Echte Erfahrungen</h2>
+    <p class="section-sub">Tausende Nutzer vertrauen taeglich auf unseren KI-Assistenten.</p>
+    <div class="testi-grid">
+      <div class="testi-card"><div class="testi-stars">★★★★★</div><p class="testi-text">„Ich bin begeistert, wie praezise und schnell der Agent antwortet. Hat meinen Arbeitsalltag komplett veraendert!"</p><div class="testi-author"><div class="testi-avatar">MK</div><div><div class="testi-name">Maria K.</div><div class="testi-role">Produktmanagerin, Berlin</div></div></div></div>
+      <div class="testi-card"><div class="testi-stars">★★★★★</div><p class="testi-text">„Das Chat-Widget ist super intuitiv und sieht modern aus. Perfekt fuer unsere Kunden-Kommunikation."</p><div class="testi-author"><div class="testi-avatar">TS</div><div><div class="testi-name">Thomas S.</div><div class="testi-role">Gruender, Muenchen</div></div></div></div>
+      <div class="testi-card"><div class="testi-stars">★★★★★</div><p class="testi-text">„Deployment auf Netlify lief in 10 Minuten durch. Kein Aufwand, sofort einsatzbereit. Top!"</p><div class="testi-author"><div class="testi-avatar">LP</div><div><div class="testi-name">Lisa P.</div><div class="testi-role">Entwicklerin, Hamburg</div></div></div></div>
+    </div>
+  </section>
+
+  <section class="cta-banner" id="contact">
+    <h2>Bereit loszulegen? 🚀</h2>
+    <p>Teste den KI-Agenten jetzt – kein Account noetig. Einfach den Chat oeffnen und starten.</p>
+    <a href="#" class="btn-primary" id="open-chat-cta">Chat jetzt oeffnen</a>
+  </section>
+
+  <footer>
+    <p>&copy; 2026 Watchsport. Alle Rechte vorbehalten. &nbsp;|&nbsp;
+      <a href="#">Datenschutz</a> &nbsp;|&nbsp; <a href="#">Impressum</a>
+    </p>
+  </footer>
+
+  <!-- CHAT WIDGET -->
+  <button id="chat-toggle" aria-label="Chat oeffnen">
+    <svg viewBox="0 0 24 24"><path d="M20 2H4C2.9 2 2 2.9 2 4v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg>
+    <span class="chat-badge" id="chat-badge">1</span>
+  </button>
+
+  <div id="chat-box" role="dialog" aria-label="Chat-Assistent">
+    <div class="chat-header">
+      <div class="chat-header-avatar">🤖</div>
+      <div class="chat-header-info">
+        <div class="chat-header-name">Watchsport Assistent</div>
+        <div class="chat-status"><span class="status-dot"></span> Online</div>
+      </div>
+      <button class="chat-close" id="chat-close" aria-label="Schliessen">✕</button>
+    </div>
+    <div class="chat-messages" id="chat-messages"></div>
+    <div class="chat-footer">
+      <div class="chat-input-row">
+        <textarea id="chat-input" placeholder="Schreib eine Nachricht ..." rows="1" aria-label="Nachricht eingeben"></textarea>
+        <button id="chat-send" aria-label="Senden">
+          <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+        </button>
+      </div>
+      <p class="chat-disclaimer">Powered by Langdock · Serverseitig gesichert</p>
+    </div>
+  </div>
+
+  <script>
+    // Hamburger
+    document.getElementById('hamburger').addEventListener('click', () =>
+      document.getElementById('nav-links').classList.toggle('open'));
+
+    // Chat state
+    const chatBox   = document.getElementById('chat-box');
+    const chatMsgs  = document.getElementById('chat-messages');
+    const chatInput = document.getElementById('chat-input');
+    const chatSend  = document.getElementById('chat-send');
+    const chatBadge = document.getElementById('chat-badge');
+    let isOpen = false, isBusy = false;
+
+    function openChat() {
+      isOpen = true;
+      chatBox.classList.add('open');
+      chatBadge.style.display = 'none';
+      chatInput.focus();
+      if (!chatMsgs.children.length)
+        addMsg('bot', 'Hallo! 👋 Ich bin dein persönlicher Assistent. Wie kann ich dir heute helfen?');
+    }
+    function closeChat() { isOpen = false; chatBox.classList.remove('open'); }
+
+    document.getElementById('chat-toggle').addEventListener('click', () => isOpen ? closeChat() : openChat());
+    document.getElementById('chat-close').addEventListener('click', closeChat);
+    document.getElementById('open-chat-hero').addEventListener('click', e => { e.preventDefault(); openChat(); });
+    document.getElementById('open-chat-cta').addEventListener('click', e => { e.preventDefault(); openChat(); });
+
+    // Auto-resize
+    chatInput.addEventListener('input', () => {
+      chatInput.style.height = 'auto';
+      chatInput.style.height = Math.min(chatInput.scrollHeight, 100) + 'px';
+    });
+
+    chatInput.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); }
+    });
+    chatSend.addEventListener('click', send);
+
+    function getTime() {
+      return new Date().toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+    }
+
+    function addMsg(role, text) {
+      const w = document.createElement('div');
+      w.className = 'msg ' + role;
+      const b = document.createElement('div');
+      b.className = 'msg-bubble';
+      b.textContent = text;
+      const t = document.createElement('div');
+      t.className = 'msg-time';
+      t.textContent = getTime();
+      w.appendChild(b); w.appendChild(t);
+      chatMsgs.appendChild(w);
+      chatMsgs.scrollTop = chatMsgs.scrollHeight;
+    }
+
+    function showTyping() {
+      const w = document.createElement('div');
+      w.className = 'msg bot typing-indicator'; w.id = 'typing';
+      const b = document.createElement('div'); b.className = 'msg-bubble';
+      b.innerHTML = '<span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>';
+      w.appendChild(b); chatMsgs.appendChild(w);
+      chatMsgs.scrollTop = chatMsgs.scrollHeight;
+    }
+    function hideTyping() { const t = document.getElementById('typing'); if (t) t.remove(); }
+
+    function setBusy(v) {
+      isBusy = v;
+      chatSend.disabled = v;
+      chatInput.disabled = v;
+    }
+
+    async function send() {
+      const text = chatInput.value.trim();
+      if (!text || isBusy) return;
+      chatInput.value = '';
+      chatInput.style.height = 'auto';
+      addMsg('user', text);
+      setBusy(true);
+      showTyping();
+
+      try {
+        // Ruft die Netlify Function auf (kein API-Key im Browser!)
+        const res  = await fetch('/api/chat', {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({ message: text }),
+        });
+        const data = await res.json();
+        hideTyping();
+
+        if (!res.ok) {
+          addMsg('bot', '⚠️ Fehler: ' + (data.error || 'Unbekannter Fehler.'));
+        } else {
+          // Langdock gibt { reply: "..." } zurueck (normalisiert durch chat.js)
+          addMsg('bot', data.reply || '(Keine Antwort erhalten)');
+        }
+      } catch (err) {
+        hideTyping();
+        addMsg('bot', '⚠️ Verbindungsfehler. Bitte versuche es spaeter erneut.');
+        console.error(err);
+      } finally {
+        setBusy(false);
+        chatInput.focus();
+      }
+    }
+  </script>
+</body>
+</html>
