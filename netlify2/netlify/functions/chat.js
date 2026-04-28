@@ -8,13 +8,15 @@ exports.handler = async function (event) {
   const API_KEY  = process.env.LANGDOCK_API_KEY;
   const AGENT_ID = process.env.LANGDOCK_AGENT_ID;
 
+console.log("=== Step1 ===");
+
   if (!API_KEY || !AGENT_ID) {
     return {
       statusCode: 500,
       body: JSON.stringify({ error: "Server misconfiguration: LANGDOCK_API_KEY or LANGDOCK_AGENT_ID missing." }),
     };
   }
-
+console.log("=== Step2 ===");
   let body;
   try { body = JSON.parse(event.body); }
   catch { return { statusCode: 400, body: JSON.stringify({ error: "Invalid JSON body." }) }; }
@@ -23,7 +25,7 @@ exports.handler = async function (event) {
   if (!message || typeof message !== "string") {
     return { statusCode: 400, body: JSON.stringify({ error: "Missing 'message' field." }) };
   }
-
+console.log("=== Step3 ===");
   const payload = {
     agentId: AGENT_ID,
     stream:  false,
@@ -35,7 +37,7 @@ exports.handler = async function (event) {
       },
     ],
   };
-
+console.log("=== Step4 ===");
   // Debug: logge was gesendet wird (erscheint in Netlify Function Logs)
   console.log("=== LANGDOCK REQUEST ===");
   console.log("URL:", "https://api.langdock.com/agent/v1/chat/completions");
@@ -66,7 +68,7 @@ exports.handler = async function (event) {
       }),
     };
   }
-
+console.log("=== Step5 ===");
   // Rohantwort lesen
   const rawText = await response.text();
   console.log("=== LANGDOCK RESPONSE ===");
@@ -106,3 +108,4 @@ exports.handler = async function (event) {
     body: JSON.stringify({ reply }),
   };
 };
+
