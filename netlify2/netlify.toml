@@ -3,6 +3,6 @@
   functions = "netlify/functions"
 
 [[redirects]]
-  from = "/api/chat"
+  from = ""
   to   = "/.netlify/functions/chat"
   status = 200
