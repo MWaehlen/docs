@@ -365,6 +365,7 @@ console.log("status", res.status, "url", res.url , "body" , res.body);
           addMsg('bot', '⚠️ Fehler: ' + (data.error || 'Unbekannter Fehler.'));
         } else {
           // Langdock gibt { reply: "..." } zurueck (normalisiert durch chat.js)
+          console.log("status", res.ok);
           addMsg('bot', data.reply || '(Keine Antwort erhalten)');
         }
       } catch (err) {
