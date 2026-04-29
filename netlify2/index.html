@@ -344,12 +344,12 @@ const res = await fetch("/api/chat", {
 
 console.log("status", res.status, "url", res.url);
 
-const raw = await res.text();
-console.log("raw body:", raw);
+//const raw = await res.text();
+//console.log("raw body:", raw);
 
-if (!res.ok) throw new Error(raw || `HTTP ${res.status}`);
+//if (!res.ok) throw new Error(raw || `HTTP ${res.status}`);
 
-const data = JSON.parse(raw);
+//const data = JSON.parse(raw);
 
         // ALter function
  //        const res  = await fetch('/api/chat', {
