@@ -342,7 +342,7 @@ const res = await fetch("/api/chat", {
   body: JSON.stringify({ message: text }),
 });
 
-console.log("status", res.status, "url", res.url);
+console.log("status", res.status, "url", res.url , "body" , res.body);
 
 //const raw = await res.text();
 //console.log("raw body:", raw);
