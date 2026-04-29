@@ -332,10 +332,10 @@
       setBusy(true);
       showTyping();
       console.log("=== Hello in indexLANGDOCK REQUEST ===");
-       const API_KEY  = process.env.LANGDOCK_API_KEY;
-       const AGENT_ID = process.env.LANGDOCK_AGENT_ID;
-       console.log("=== Hello in indexLANGDOCK REQUEST ===");
-       console.log("AGENT_ID:", AGENT_ID);
+      const API_KEY  = LANGDOCK_API_KEY;
+      const AGENT_ID = LANGDOCK_AGENT_ID;
+      console.log("=== Hello in indexLANGDOCK REQUEST ===");
+      console.log("AGENT_ID:", AGENT_ID);
       
       try {
         // Ruft die Netlify Function auf (kein API-Key im Browser!)
