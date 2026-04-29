@@ -352,14 +352,14 @@ if (!res.ok) throw new Error(raw || `HTTP ${res.status}`);
 const data = JSON.parse(raw);
 
         // ALter function
-         const res  = await fetch('/api/chat', {
-          method:  'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body:    JSON.stringify({ message: text }),
-        });
+ //        const res  = await fetch('/api/chat', {
+ //         method:  'POST',
+ //         headers: { 'Content-Type': 'application/json' },
+ //         body:    JSON.stringify({ message: text }),
+ //       });
          
-        const data = await res.json();
-        hideTyping();
+ //       const data = await res.json();
+  //      hideTyping();
 
         if (!res.ok) {
           addMsg('bot', '⚠️ Fehler: ' + (data.error || 'Unbekannter Fehler.'));
