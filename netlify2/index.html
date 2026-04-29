@@ -336,13 +336,28 @@
       
       try {
         // Ruft die Netlify Function auf (kein API-Key im Browser!)
-       // const res = await fetch('/netlify/functions', {
+const res = await fetch("/api/chat", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ message: text }),
+});
+
+console.log("status", res.status, "url", res.url);
+
+const raw = await res.text();
+console.log("raw body:", raw);
+
+if (!res.ok) throw new Error(raw || `HTTP ${res.status}`);
+
+const data = JSON.parse(raw);
+
+        // ALter function
          const res  = await fetch('/api/chat', {
           method:  'POST',
           headers: { 'Content-Type': 'application/json' },
           body:    JSON.stringify({ message: text }),
         });
-         console.log(res);
+         
         const data = await res.json();
         hideTyping();
 
