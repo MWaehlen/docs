@@ -358,11 +358,7 @@ const reply =
   || '(Keine Antwort erhalten)';
 
 addMsg('bot', reply);
-    
-      }
-    }
-
-        catch (err) {
+             catch (err) {
         hideTyping();
         addMsg('bot', '⚠️ Verbindungsfehler. Bitte versuche es spaeter erneut.');
         console.error(err);
@@ -370,6 +366,11 @@ addMsg('bot', reply);
         setBusy(false);
         chatInput.focus();
       }
+    
+      }
+    }
+
+   
         
 
   </script>
