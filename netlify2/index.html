@@ -343,25 +343,24 @@
   body: JSON.stringify({ message: text }),
 });
 
-const data = await res.json();   // <-- DAS FEHLT aktuell
-
+const data = await res.json();
 hideTyping();
 
 if (!res.ok) {
   addMsg('bot', '⚠️ Fehler: ' + (data.error || 'Unbekannter Fehler.'));
-} else {
-  addMsg('bot', data.reply || '(Keine Antwort erhalten)');
+  return;
 }
 
-      } catch (err) {
-        hideTyping();
-        addMsg('bot', '⚠️ Verbindungsfehler. Bitte versuche es spaeter erneut.');
-        console.error(err);
-      } finally {
-        setBusy(false);
-        chatInput.focus();
-      }
-    }
+// Nimm nur den ersten assistant message content-Block
+const reply =
+  data?.messages?.find(m => m.role === 'assistant')?.content
+  || '(Keine Antwort erhalten)';
+
+addMsg('bot', reply);
+     
+
+
+
   </script>
 </body>
 </html>
