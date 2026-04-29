@@ -336,38 +336,23 @@
       
       try {
         // Ruft die Netlify Function auf (kein API-Key im Browser!)
-const res = await fetch("/api/chat", {
+
+        const res = await fetch("/api/chat", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({ message: text }),
 });
 
-console.log("status", res.status, "url", res.url , "body" , res.body);
+const data = await res.json();   // <-- DAS FEHLT aktuell
 
-//const raw = await res.text();
-//console.log("raw body:", raw);
+hideTyping();
 
-//if (!res.ok) throw new Error(raw || `HTTP ${res.status}`);
+if (!res.ok) {
+  addMsg('bot', '⚠️ Fehler: ' + (data.error || 'Unbekannter Fehler.'));
+} else {
+  addMsg('bot', data.reply || '(Keine Antwort erhalten)');
+}
 
-//const data = JSON.parse(raw);
-
-        // ALter function
- //        const res  = await fetch('/api/chat', {
- //         method:  'POST',
- //         headers: { 'Content-Type': 'application/json' },
- //         body:    JSON.stringify({ message: text }),
- //       });
-         
- //       const data = await res.json();
-  //      hideTyping();
-
-        if (!res.ok) {
-          addMsg('bot', '⚠️ Fehler: ' + (data.error || 'Unbekannter Fehler.'));
-        } else {
-          // Langdock gibt { reply: "..." } zurueck (normalisiert durch chat.js)
-          console.log("status", res.ok);
-          addMsg('bot', data.reply || '(Keine Antwort erhalten)');
-        }
       } catch (err) {
         hideTyping();
         addMsg('bot', '⚠️ Verbindungsfehler. Bitte versuche es spaeter erneut.');
