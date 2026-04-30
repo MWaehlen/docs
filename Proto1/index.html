@@ -333,8 +333,7 @@
       showTyping();
       console.log("=== Hello in indexLANGDOCK REQUEST ===");
  
- try {
-  // Ruft die Netlify Function auf (kein API-Key im Browser!)
+try {
   const res = await fetch("/api/chat", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -343,9 +342,8 @@
 
   console.log("status", res.status, "url", res.url);
 
-  // JSON aus der Netlify Function holen
   const data = await res.json();
-  console.log("Langdock raw:", data);
+  console.log("Langdock/Netlify response:", data);
 
   hideTyping();
 
@@ -354,27 +352,38 @@
     return;
   }
 
-  // 🔹 Nur messages[].content anzeigen
-  const assistantMessages = (data.messages || []).filter(
-    m => m.role === 'assistant'
-  );
+  let reply = "";
 
-  const reply =
-    assistantMessages
+  // 1) Versuche: messages[].content (Rohantwort von Langdock)
+  if (Array.isArray(data.messages)) {
+    const assistantMessages = data.messages.filter(m => m.role === "assistant");
+    reply = assistantMessages
       .map(m => m.content)
       .filter(Boolean)
-      .join('\n\n') || '(Keine Antwort erhalten)';
+      .join("\n\n");
+  }
 
-  addMsg('bot', reply);
+  // 2) Fallback: normalisierte Antwort { reply: "..." } von deiner Function
+  if (!reply && typeof data.reply === "string") {
+    reply = data.reply;
+  }
+
+  // 3) Letzter Fallback
+  if (!reply) {
+    reply = "(Keine Antwort erhalten)";
+  }
+
+  addMsg("bot", reply);
 
 } catch (err) {
   hideTyping();
-  addMsg('bot', '⚠️ Verbindungsfehler. Bitte versuche es spaeter erneut.');
+  addMsg("bot", "⚠️ Verbindungsfehler. Bitte versuche es spaeter erneut.");
   console.error(err);
 } finally {
   setBusy(false);
   chatInput.focus();
 }
+
 }
       
      
