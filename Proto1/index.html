@@ -164,13 +164,21 @@
     }
 
     /* neue CSS */
-/* Bot-Bubble: normales HTML von marked */
+/* Bot-Bubble: HTML von marked */
 .msg-bubble {
   white-space: normal;
   line-height: 1.4;
 }
 
-/* Listen & Abstände */
+/* Überschriften */
+.msg-bubble h1,
+.msg-bubble h2,
+.msg-bubble h3 {
+  margin: 0 0 0.4rem;
+  font-size: 1rem;
+}
+
+/* Listen */
 .msg-bubble ul {
   padding-left: 1.4rem;
   margin: 0.3rem 0;
@@ -189,27 +197,7 @@
   border-radius: 4px;
 }
 
-/* Überschrift ähnlicher Stil wie in deinem Ziel-Screenshot */
-.msg-bubble h1,
-.msg-bubble h2,
-.msg-bubble h3 {
-  margin: 0 0 0.4rem;
-  font-size: 1rem;
-}
-
-/* 🔹 Quelle-Zeile unten wie im 2. Screenshot */
-.source-line {
-  margin-top: 0.4rem;
-  margin-left: 1.4rem;   /* leicht eingerückt unter den Bullets */
-  font-size: 0.85em;
-  color: #555;
-}
-
-.source-label {
-  font-style: italic;
-}
-
-/* kleine graue Badge-Kreise wie im Screenshot */
+/* 🔹 Kleine graue Quellen-Badges direkt im Text */
 .citation-badge {
   display: inline-block;
   min-width: 1.4em;
@@ -219,8 +207,10 @@
   background: #e5e5e5;
   color: #555;
   font-size: 0.75em;
+  line-height: 1.4;
   margin-left: 0.25rem;
-  cursor: help;              /* Mouse-over zeigt Tooltip */
+  vertical-align: baseline;
+  cursor: help;        /* Mouse-over → Tooltip */
 }
 
 
@@ -344,55 +334,25 @@
     const chatSend  = document.getElementById('chat-send');
     const chatBadge = document.getElementById('chat-badge');
     let isOpen = false, isBusy = false;
-function niceCitationLabel(idx) {
-  // idx z.B. "mnt/data/Schulung_UCS_Verdachtsprobe.docx#page=3"
-  const m = idx.match(/\/([^\/#]+)(?:#page=(\d+))?$/);
-  if (!m) return idx;
-
-  let file = m[1];                      // Schulung_UCS_Verdachtsprobe.docx
-  file = file.replace(/\.[^.]+$/, "");  // Endung (.docx) weg
-  file = file.replace(/[_-]+/g, " ");   // Unterstriche → Leerzeichen
-
-  // wie im Screenshot: ohne „Seite …“, also:
-  return file;                          // "Schulung UCS Verdachtsprobe"
-}
-
-function renderMarkdownWithCitations(md) {
+function renderMarkdownWithInlineCitations(md) {
   if (!md) return "";
 
-  // 1) Quellenmarker einsammeln und aus dem Text entfernen
-  const citations = [];
-  const withoutCitations = md.replace(/【([^】]+)】/g, (match, idx) => {
-    citations.push(idx);   // z.B. "mnt/data/Schulung_UCS_Verdachtsprobe.docx#page=3"
-    return "";             // Marker im Fließtext entfernen
+  let counter = 0;
+
+  // 1) Jede Quelle im Text direkt durch ein Badge ersetzen
+  //    Beispiel:  ...Text...【mnt/data/...#page=3】
+  const withBadges = md.replace(/【([^】]+)】/g, (match, idx) => {
+    counter++;
+    // Zahl im Kreis/Badge, Tooltip zeigt vollen Pfad
+    return ` <span class="citation-badge" title="${idx}">${counter}</span>`;
+    // Wenn du stattdessen IMMER "99" anzeigen willst:
+    // return ` <span class="citation-badge" title="${idx}">99</span>`;
   });
 
-  // 2) Haupttext als Markdown rendern (Überschriften, Listen, `code`, …)
-  const mainHtml = marked.parse(withoutCitations);
-
-  // 3) Wenn keine Quellen → nur Text
-  if (citations.length === 0) return mainHtml;
-
-  // 4) Source-Zeile wie im 2. Screenshot bauen:
-  //    "Quelle: Schulung UCS Verdachtsprobe  ① ②"
-  const baseLabel = niceCitationLabel(citations[0]);  // alle kommen meist aus derselben Datei
-
-  const badges = citations
-    .map((idx, i) => {
-      const num = i + 1;
-      return `<span class="citation-badge" title="${idx}">${num}</span>`;
-    })
-    .join(" ");
-
-  const sourceLineHtml = `
-    <p class="source-line">
-      Quelle: <span class="source-label" title="${citations[0]}">${baseLabel}</span>
-      ${badges}
-    </p>
-  `;
-
-  return mainHtml + sourceLineHtml;
+  // 2) Danach ganz normal Markdown → HTML
+  return marked.parse(withBadges);
 }
+
     
     function openChat() {
       isOpen = true;
@@ -424,7 +384,7 @@ function renderMarkdownWithCitations(md) {
       return new Date().toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
     }
 
-   function addMsg(role, text) {
+ function addMsg(role, text) {
   const w = document.createElement('div');
   w.className = 'msg ' + role;
 
@@ -432,10 +392,10 @@ function renderMarkdownWithCitations(md) {
   b.className = 'msg-bubble';
 
   if (role === 'bot') {
-    // Bot-Antwort: Markdown + Quellenblock
-    b.innerHTML = renderMarkdownWithCitations(text);
+    // Bot: Markdown + Inline-Quellenbadges
+    b.innerHTML = renderMarkdownWithInlineCitations(text);
   } else {
-    // User: plain text
+    // User: nur Text
     b.textContent = text;
   }
 
@@ -448,7 +408,6 @@ function renderMarkdownWithCitations(md) {
   chatMsgs.appendChild(w);
   chatMsgs.scrollTop = chatMsgs.scrollHeight;
 }
-
 
     function showTyping() {
       const w = document.createElement('div');
