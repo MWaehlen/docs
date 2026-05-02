@@ -150,6 +150,8 @@
       #chat-toggle { right: 16px; bottom: 20px; }
     }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
 </head>
 <body>
 
@@ -295,20 +297,29 @@
     function getTime() {
       return new Date().toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
     }
+function addMsg(role, text) {
+  const w = document.createElement('div');
+  w.className = 'msg ' + role;
 
-    function addMsg(role, text) {
-      const w = document.createElement('div');
-      w.className = 'msg ' + role;
-      const b = document.createElement('div');
-      b.className = 'msg-bubble';
-      b.textContent = text;
-      const t = document.createElement('div');
-      t.className = 'msg-time';
-      t.textContent = getTime();
-      w.appendChild(b); w.appendChild(t);
-      chatMsgs.appendChild(w);
-      chatMsgs.scrollTop = chatMsgs.scrollHeight;
-    }
+  const b = document.createElement('div');
+  b.className = 'msg-bubble';
+
+  if (role === 'bot') {
+    b.innerHTML = marked.parse(text);   // Markdown → HTML
+  } else {
+    b.textContent = text;
+  }
+
+  const t = document.createElement('div');
+  t.className = 'msg-time';
+  t.textContent = getTime();
+
+  w.appendChild(b);
+  w.appendChild(t);
+  chatMsgs.appendChild(w);
+  chatMsgs.scrollTop = chatMsgs.scrollHeight;
+}
+
 
     function showTyping() {
       const w = document.createElement('div');
