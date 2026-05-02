@@ -323,70 +323,46 @@
       chatInput.disabled = v;
     }
 
-    async function send() {
-      const text = chatInput.value.trim();
-      if (!text || isBusy) return;
-      chatInput.value = '';
-      chatInput.style.height = 'auto';
-      addMsg('user', text);
-      setBusy(true);
-      showTyping();
-      console.log("=== Hello in indexLANGDOCK REQUEST ===");
- 
-try {
-  const res = await fetch("/api/chat", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ message: text }),
-  });
+  async function send() {
+  const text = chatInput.value.trim();
+  if (!text || isBusy) return;
+  chatInput.value = '';
+  chatInput.style.height = 'auto';
+  addMsg('user', text);
+  setBusy(true);
+  showTyping();
+  console.log("=== Hello in indexLANGDOCK REQUEST ===");
 
-  console.log("status", res.status, "url", res.url);
+  try {
+    const res = await fetch("/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: text }),
+    });
 
-  const data = await res.json();
-  console.log("Langdock/Netlify response:", data);
+    console.log("status", res.status, "url", res.url);
 
-  hideTyping();
+    const data = await res.json();
+    console.log("Netlify /api/chat response:", data);
 
-  if (!res.ok) {
-    addMsg('bot', '⚠️ Fehler: ' + (data.error || 'Unbekannter Fehler.'));
-    return;
+    hideTyping();
+
+    if (!res.ok) {
+      addMsg('bot', '⚠️ Fehler: ' + (data.error || 'Unbekannter Fehler.'));
+    } else {
+      addMsg('bot', data.reply || '(Keine Antwort erhalten)');
+    }
+
+  } catch (err) {
+    hideTyping();
+    addMsg('bot', '⚠️ Verbindungsfehler. Bitte versuche es spaeter erneut.');
+    console.error(err);
+  } finally {
+    setBusy(false);
+    chatInput.focus();
   }
-
-  let reply = "";
-
-  // 1) Versuche: messages[].content (Rohantwort von Langdock)
-  if (Array.isArray(data.messages)) {
-    const assistantMessages = data.messages.filter(m => m.role === "assistant");
-    reply = assistantMessages
-      .map(m => m.content)
-      .filter(Boolean)
-      .join("\n\n");
-  }
-
-  // 2) Fallback: normalisierte Antwort { reply: "..." } von deiner Function
-  if (!reply && typeof data.reply === "string") {
-    reply = data.reply;
-  }
-
-  // 3) Letzter Fallback
-  if (!reply) {
-    reply = "(Keine Antwort erhalten)";
-  }
-
-  addMsg("bot", reply);
-
-} catch (err) {
-  hideTyping();
-  addMsg("bot", "⚠️ Verbindungsfehler. Bitte versuche es spaeter erneut.");
-  console.error(err);
-} finally {
-  setBusy(false);
-  chatInput.focus();
 }
 
-}
-      
-     
   </script>
 </body>
 </html>
