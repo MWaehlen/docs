@@ -164,25 +164,16 @@
     }
 
     /* neue CSS */
-
-    /* Allgemein für Bot-Bubbles */
+/* Bot-Bubble: normales HTML von marked */
 .msg-bubble {
-  white-space: normal;  /* Marked macht HTML, kein pre-wrap mehr */
+  white-space: normal;
   line-height: 1.4;
 }
 
-/* Überschriften in der Bubble */
-.msg-bubble h1,
-.msg-bubble h2,
-.msg-bubble h3 {
-  margin: 0 0 0.4rem;
-  font-size: 1rem;
-}
-
-/* Listen */
+/* Listen & Abstände */
 .msg-bubble ul {
   padding-left: 1.4rem;
-  margin: 0.3rem 0 0.3rem 0;
+  margin: 0.3rem 0;
 }
 
 .msg-bubble li {
@@ -198,32 +189,27 @@
   border-radius: 4px;
 }
 
-/* Quellenblock unten */
-.citations {
-  margin-top: 0.75rem;
+/* Überschrift ähnlicher Stil wie in deinem Ziel-Screenshot */
+.msg-bubble h1,
+.msg-bubble h2,
+.msg-bubble h3 {
+  margin: 0 0 0.4rem;
+  font-size: 1rem;
+}
+
+/* 🔹 Quelle-Zeile unten wie im 2. Screenshot */
+.source-line {
+  margin-top: 0.4rem;
+  margin-left: 1.4rem;   /* leicht eingerückt unter den Bullets */
   font-size: 0.85em;
   color: #555;
 }
 
-.citations-title {
-  font-weight: 600;
-  margin-bottom: 0.25rem;
+.source-label {
+  font-style: italic;
 }
 
-.citations-list {
-  list-style: none;
-  padding-left: 0;
-  margin: 0;
-}
-
-.citations-list li {
-  display: flex;
-  align-items: center;
-  gap: 0.35rem;
-  margin: 0.1rem 0;
-}
-
-/* kleine graue „Badge“-Kreise wie in deinem Wunschbild */
+/* kleine graue Badge-Kreise wie im Screenshot */
 .citation-badge {
   display: inline-block;
   min-width: 1.4em;
@@ -233,13 +219,11 @@
   background: #e5e5e5;
   color: #555;
   font-size: 0.75em;
-  cursor: help;            /* Mouse-over-Kursor */
+  margin-left: 0.25rem;
+  cursor: help;              /* Mouse-over zeigt Tooltip */
 }
 
-.citation-label {
-  cursor: help;
-  border-bottom: 1px dotted #bbb;
-}
+
 
   </style>
 
@@ -360,62 +344,56 @@
     const chatSend  = document.getElementById('chat-send');
     const chatBadge = document.getElementById('chat-badge');
     let isOpen = false, isBusy = false;
-    
 function niceCitationLabel(idx) {
-  // idx z.B. "mnt/data/Schulung_UCS_Verdachtskontrolle.docx#page=3"
+  // idx z.B. "mnt/data/Schulung_UCS_Verdachtsprobe.docx#page=3"
   const m = idx.match(/\/([^\/#]+)(?:#page=(\d+))?$/);
   if (!m) return idx;
 
-  let file = m[1];                      // Schulung_UCS_Verdachtskontrolle.docx
-  file = file.replace(/\.[^.]+$/, "");  // ohne .docx
+  let file = m[1];                      // Schulung_UCS_Verdachtsprobe.docx
+  file = file.replace(/\.[^.]+$/, "");  // Endung (.docx) weg
   file = file.replace(/[_-]+/g, " ");   // Unterstriche → Leerzeichen
 
-  const page = m[2] ? ` (Seite ${m[2]})` : "";
-  return file + page;                   // "Schulung UCS Verdachtskontrolle (Seite 3)"
+  // wie im Screenshot: ohne „Seite …“, also:
+  return file;                          // "Schulung UCS Verdachtsprobe"
 }
 
 function renderMarkdownWithCitations(md) {
   if (!md) return "";
 
-  // 1) Alle Quellenmarker einsammeln und aus dem Text entfernen
+  // 1) Quellenmarker einsammeln und aus dem Text entfernen
   const citations = [];
   const withoutCitations = md.replace(/【([^】]+)】/g, (match, idx) => {
-    citations.push(idx);   // z.B. "mnt/data/Schulung_UCS_Verdachtskontrolle.docx#page=3"
+    citations.push(idx);   // z.B. "mnt/data/Schulung_UCS_Verdachtsprobe.docx#page=3"
     return "";             // Marker im Fließtext entfernen
   });
 
-  // 2) Haupttext als Markdown rendern
+  // 2) Haupttext als Markdown rendern (Überschriften, Listen, `code`, …)
   const mainHtml = marked.parse(withoutCitations);
 
-  // 3) Wenn keine Quellen: fertig
+  // 3) Wenn keine Quellen → nur Text
   if (citations.length === 0) return mainHtml;
 
-  // 4) Quellenblock unten bauen
-  const items = citations.map((idx, i) => {
-    const num   = i + 1;
-    const label = niceCitationLabel(idx);
-    return `
-      <li>
-        <span class="citation-badge" title="${idx}">${num}</span>
-        <span class="citation-label" title="${idx}">${label}</span>
-      </li>
-    `;
-  }).join("");
+  // 4) Source-Zeile wie im 2. Screenshot bauen:
+  //    "Quelle: Schulung UCS Verdachtsprobe  ① ②"
+  const baseLabel = niceCitationLabel(citations[0]);  // alle kommen meist aus derselben Datei
 
-  const citationsHtml = `
-    <div class="citations">
-      <div class="citations-title">
-        Quelle${citations.length > 1 ? "n" : ""}:
-      </div>
-      <ul class="citations-list">
-        ${items}
-      </ul>
-    </div>
+  const badges = citations
+    .map((idx, i) => {
+      const num = i + 1;
+      return `<span class="citation-badge" title="${idx}">${num}</span>`;
+    })
+    .join(" ");
+
+  const sourceLineHtml = `
+    <p class="source-line">
+      Quelle: <span class="source-label" title="${citations[0]}">${baseLabel}</span>
+      ${badges}
+    </p>
   `;
 
-  return mainHtml + citationsHtml;
+  return mainHtml + sourceLineHtml;
 }
-
+    
     function openChat() {
       isOpen = true;
       chatBox.classList.add('open');
