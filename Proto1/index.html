@@ -163,7 +163,7 @@
 
     }
   </style>
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
 
 </head>
 <body>
@@ -267,7 +267,8 @@
       <p class="chat-disclaimer">Powered by Langdock · Serverseitig gesichert</p>
     </div>
   </div>
-
+  
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script>
     // Hamburger
     document.getElementById('hamburger').addEventListener('click', () =>
@@ -280,40 +281,59 @@
     const chatSend  = document.getElementById('chat-send');
     const chatBadge = document.getElementById('chat-badge');
     let isOpen = false, isBusy = false;
+function niceCitationLabel(idx) {
+  // idx z.B. "mnt/data/Schulung_UCS_Verdachtskontrolle.docx#page=3"
+  const m = idx.match(/\/([^\/#]+)(?:#page=(\d+))?$/);
+  if (!m) return idx;
 
-    function renderMarkdown(md) {
+  let file = m[1];                      // Schulung_UCS_Verdachtskontrolle.docx
+  file = file.replace(/\.[^.]+$/, "");  // ohne .docx
+  file = file.replace(/[_-]+/g, " ");   // Unterstriche → Leerzeichen
+
+  const page = m[2] ? ` (Seite ${m[2]})` : "";
+  return file + page;                   // "Schulung UCS Verdachtskontrolle (Seite 3)"
+}
+
+function renderMarkdownWithCitations(md) {
   if (!md) return "";
 
-  // 1) HTML escapen
-  let text = md
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
-
-  // 2) **fett**
-  text = text.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
-
-  // 3) Quellenmarker 【...】 in Link mit Tooltip umwandeln
-  // Beispiel: 【mnt/data/Schulung\_UCS\_Sorgfaltskontrolle.docx#page=3】
-  text = text.replace(/【([^】]+)】/g, (match, idx) => {
-    // idx ist z.B. "mnt/data/Schulung_UCS_Sorgfaltskontrolle.docx#page=3"
-    // Anzeige: [Quelle], Tooltip: kompletter Pfad
-    return `<a href="#" class="citation" title="${idx}">[Quelle]</a>`;
+  // 1) Alle Quellenmarker einsammeln und aus dem Text entfernen
+  const citations = [];
+  const withoutCitations = md.replace(/【([^】]+)】/g, (match, idx) => {
+    citations.push(idx);   // z.B. "mnt/data/Schulung_UCS_Verdachtskontrolle.docx#page=3"
+    return "";             // Marker im Fließtext entfernen
   });
 
-  // 4) Zeilen in Absätze umwandeln (sehr einfache Variante)
-  const lines = text.split("\n");
-  let html = "";
-  for (let line of lines) {
-    const trimmed = line.trim();
-    if (!trimmed) {
-      html += "<p></p>";
-    } else {
-      html += "<p>" + trimmed + "</p>";
-    }
-  }
+  // 2) Haupttext als Markdown rendern
+  const mainHtml = marked.parse(withoutCitations);
 
-  return html;
+  // 3) Wenn keine Quellen: fertig
+  if (citations.length === 0) return mainHtml;
+
+  // 4) Quellenblock unten bauen
+  const items = citations.map((idx, i) => {
+    const num   = i + 1;
+    const label = niceCitationLabel(idx);
+    return `
+      <li>
+        <span class="citation-badge" title="${idx}">${num}</span>
+        <span class="citation-label" title="${idx}">${label}</span>
+      </li>
+    `;
+  }).join("");
+
+  const citationsHtml = `
+    <div class="citations">
+      <div class="citations-title">
+        Quelle${citations.length > 1 ? "n" : ""}:
+      </div>
+      <ul class="citations-list">
+        ${items}
+      </ul>
+    </div>
+  `;
+
+  return mainHtml + citationsHtml;
 }
 
     function openChat() {
