@@ -212,26 +212,31 @@
   vertical-align: baseline;
   cursor: help;        /* Mouse-over → Tooltip */
 }
-/* video CSS */
-.demo-video {
-  max-width: 800px;
-  margin: 2rem auto;
-  padding: 1rem 1.5rem;
+.video-overlay-content {
+  background: #fff;
   border-radius: 12px;
-  background: #f7f7f7;
+  padding: 1rem 1.25rem 1.25rem;
+  max-width: 900px;
+  width: 90%;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
 }
 
-.demo-video h2 {
-  margin-top: 0;
-  margin-bottom: 0.5rem;
-  font-size: 1.2rem;
+/* Info-Grafik im Overlay */
+.overlay-infografik {
+  margin-top: 1rem;
 }
 
-.demo-video p {
-  margin-top: 0;
-  margin-bottom: 0.75rem;
-  color: #555;
-  font-size: 0.95rem;
+.overlay-infografik h4 {
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+}
+
+.overlay-infografik img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
 }
 
 
@@ -302,21 +307,36 @@
     </div>
   </section>
 
+  <div id="video-overlay" class="video-overlay">
+  <div class="video-overlay-content">
+    <button id="video-close" class="video-close">&times;</button>
+
+    <h3>Demo: Abfall Compliance in der Klinik</h3>
+    <p>In diesem kurzen Video siehst du was Du für die Abfall Compliance in der Klinik beachten musst.</p>
+    <p>Der KI Berater hilft Dir hier Deine Fragen zu beantworten.</p>
+
+    <video id="demo-video-player" controls width="100%" poster="/assets/img/demo-poster.png">
+    <source src="/assets/Abfall-Compliance_Klinik.mp4" type="video/mp4">
+      Dein Browser unterstützt das Video-Tag nicht.
+    </video>
+
+    <div class="overlay-infografik">
+      <h4>Prozessgrafik Verdachtsprobe</h4>
+      <img
+        src="/assets/verdachtsprobe-infografik.png"
+        alt="Info-Grafik zum Ablauf Abfall Compliance in der Klinik."
+      >
+    </div>
+  </div>
+ </div>
+
+</section>
   <section class="cta-banner" id="contact">
     <h2>Bereit loszulegen? 🚀</h2>
     <p>Teste den KI-Agenten jetzt – kein Account noetig. Einfach den Chat oeffnen und starten.</p>
     <a href="#" class="btn-primary" id="open-chat-cta">Chat jetzt oeffnen</a>
   </section>
-/* Video */
-  <section id="demo-video" class="demo-video">
-  <h2>Demo: Verdachtsprobe in SAP-QM</h2>
-  <p>In diesem kurzen Video siehst du Schritt für Schritt, wie du die Verdachtsprobe im System anlegst.</p>
 
-  <video controls width="100%" poster="/assets/img/demo-poster.png">
-    <source src="/assets/Abfall-Compliance_Klinik.mp4" type="video/mp4">
-    Dein Browser unterstützt das Video-Tag nicht.
-  </video>
-</section>
 
   <footer>
     <p>&copy; 2026 Watchsport. Alle Rechte vorbehalten. &nbsp;|&nbsp;
