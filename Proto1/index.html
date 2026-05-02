@@ -268,6 +268,41 @@
     const chatBadge = document.getElementById('chat-badge');
     let isOpen = false, isBusy = false;
 
+    function renderMarkdown(md) {
+  if (!md) return "";
+
+  // 1) HTML escapen
+  let text = md
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+
+  // 2) **fett**
+  text = text.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+
+  // 3) Quellenmarker 【...】 in Link mit Tooltip umwandeln
+  // Beispiel: 【mnt/data/Schulung\_UCS\_Sorgfaltskontrolle.docx#page=3】
+  text = text.replace(/【([^】]+)】/g, (match, idx) => {
+    // idx ist z.B. "mnt/data/Schulung_UCS_Sorgfaltskontrolle.docx#page=3"
+    // Anzeige: [Quelle], Tooltip: kompletter Pfad
+    return `<a href="#" class="citation" title="${idx}">[Quelle]</a>`;
+  });
+
+  // 4) Zeilen in Absätze umwandeln (sehr einfache Variante)
+  const lines = text.split("\n");
+  let html = "";
+  for (let line of lines) {
+    const trimmed = line.trim();
+    if (!trimmed) {
+      html += "<p></p>";
+    } else {
+      html += "<p>" + trimmed + "</p>";
+    }
+  }
+
+  return html;
+}
+
     function openChat() {
       isOpen = true;
       chatBox.classList.add('open');
@@ -297,7 +332,8 @@
     function getTime() {
       return new Date().toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
     }
-function addMsg(role, text) {
+
+    function addMsg(role, text) {
   const w = document.createElement('div');
   w.className = 'msg ' + role;
 
@@ -305,9 +341,9 @@ function addMsg(role, text) {
   b.className = 'msg-bubble';
 
   if (role === 'bot') {
-    b.innerHTML = marked.parse(text);   // Markdown → HTML
+    b.innerHTML = renderMarkdown(text);  // Bot: Markdown + Quellen-Link
   } else {
-    b.textContent = text;
+    b.textContent = text;               // User: plain text
   }
 
   const t = document.createElement('div');
@@ -319,6 +355,7 @@ function addMsg(role, text) {
   chatMsgs.appendChild(w);
   chatMsgs.scrollTop = chatMsgs.scrollHeight;
 }
+
 
 
     function showTyping() {
