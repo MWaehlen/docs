@@ -8,7 +8,7 @@ exports.handler = async function (event) {
   const API_KEY  = process.env.LANGDOCK_API_KEY;
   const AGENT_ID = process.env.LANGDOCK_AGENT_ID;
 
-console.log("=== Step1 ===");
+  console.log("=== Step1 ===");
 
   if (!API_KEY || !AGENT_ID) {
     return {
@@ -16,19 +16,26 @@ console.log("=== Step1 ===");
       body: JSON.stringify({ error: "Server misconfiguration: LANGDOCK_API_KEY or LANGDOCK_AGENT_ID missing." }),
     };
   }
-console.log("=== Step2 ===");
+
+  console.log("=== Step2 ===");
+
   let body;
-  try { body = JSON.parse(event.body); }
-  catch { return { statusCode: 400, body: JSON.stringify({ error: "Invalid JSON body." }) }; }
+  try {
+    body = JSON.parse(event.body);
+  } catch {
+    return { statusCode: 400, body: JSON.stringify({ error: "Invalid JSON body." }) };
+  }
 
   const { message } = body;
   if (!message || typeof message !== "string") {
     return { statusCode: 400, body: JSON.stringify({ error: "Missing 'message' field." }) };
   }
-console.log("=== Step3 ===");
+
+  console.log("=== Step3 ===");
+
   const payload = {
     agentId: AGENT_ID,
-    stream:  false,
+    stream: false,
     messages: [
       {
         id:    "msg_" + Date.now(),
@@ -37,8 +44,8 @@ console.log("=== Step3 ===");
       },
     ],
   };
-console.log("=== Step4 ===");
-  // Debug: logge was gesendet wird (erscheint in Netlify Function Logs)
+
+  console.log("=== Step4 ===");
   console.log("=== LANGDOCK REQUEST ===");
   console.log("URL:", "https://api.langdock.com/agent/v1/chat/completions");
   console.log("AGENT_ID:", AGENT_ID);
@@ -58,7 +65,6 @@ console.log("=== Step4 ===");
       }
     );
   } catch (err) {
-    // Netzwerkfehler (DNS, Timeout, etc.)
     console.error("=== FETCH NETWORK ERROR ===", err.message);
     return {
       statusCode: 502,
@@ -68,17 +74,20 @@ console.log("=== Step4 ===");
       }),
     };
   }
-console.log("=== Step5 ===");
-  // Rohantwort lesen
+
+  console.log("=== Step5 ===");
+
   const rawText = await response.text();
   console.log("=== LANGDOCK RESPONSE ===");
   console.log("Status:", response.status);
   console.log("Body:", rawText);
 
-  // JSON parsen
   let data;
-  try { data = JSON.parse(rawText); }
-  catch { data = { raw: rawText }; }
+  try {
+    data = JSON.parse(rawText);
+  } catch {
+    data = { raw: rawText };
+  }
 
   if (!response.ok) {
     return {
@@ -92,15 +101,49 @@ console.log("=== Step5 ===");
     };
   }
 
-  // Antworttext extrahieren
-  const reply =
-    data?.parts?.find(p => p.type === "text")?.text ||
-    data?.parts?.[0]?.text ||
-    data?.output ||
-    data?.content ||
-    data?.message ||
-    data?.raw ||
-    JSON.stringify(data);
+  // 🔹 Antworttext aus data.messages extrahieren
+  let reply = "";
+
+  if (Array.isArray(data.messages)) {
+    // alle Assistant-Messages sammeln
+    const assistantMessages = data.messages.filter(
+      m => m.role === "assistant"
+    );
+
+    // von hinten nach vorne: letzte sinnvolle Antwort nehmen
+    for (let i = assistantMessages.length - 1; i >= 0 && !reply; i--) {
+      const m = assistantMessages[i];
+      const c = m.content;
+
+      if (typeof c === "string") {
+        reply = c;
+      } else if (Array.isArray(c)) {
+        // content als Array von Blöcken
+        reply = c
+          .map(part => {
+            if (typeof part === "string") return part;
+            if (part && typeof part.text === "string") return part.text;
+            if (part && typeof part.content === "string") return part.content;
+            return "";
+          })
+          .filter(Boolean)
+          .join("\n");
+      } else if (c && typeof c === "object") {
+        if (typeof c.text === "string") reply = c.text;
+        else if (typeof c.content === "string") reply = c.content;
+      }
+    }
+  }
+
+  // Fallbacks, falls oben nichts gefunden wurde
+  if (!reply) {
+    reply =
+      data?.output ||
+      data?.content ||
+      data?.message ||
+      data?.raw ||
+      JSON.stringify(data);
+  }
 
   return {
     statusCode: 200,
@@ -108,4 +151,3 @@ console.log("=== Step5 ===");
     body: JSON.stringify({ reply }),
   };
 };
-
