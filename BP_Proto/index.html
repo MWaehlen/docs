@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>myWAI – KI-Assistent für Ihr Unternehmen</title>
+  <meta name="description" content="myWAI – Intelligente KI-Lösungen für moderne Unternehmen. Powered by Blick. GmbH." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    /* ─── Reset & Base ─────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --c-bg:        #0d0d0d;
+      --c-bg2:       #141414;
+      --c-bg3:       #1c1c1c;
+      --c-surface:   #222222;
+      --c-border:    #2e2e2e;
+      --c-text:      #f0f0f0;
+      --c-muted:     #888888;
+      --c-accent:    #e84e1b;    /* Blick.-Rot */
+      --c-accent2:   #ff6b3d;
+      --c-white:     #ffffff;
+      --radius:      12px;
+      --shadow:      0 8px 40px rgba(0,0,0,.55);
+      --font:        'Inter', sans-serif;
+      --transition:  .25s ease;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font);
+      background: var(--c-bg);
+      color: var(--c-text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+
+    /* ─── Scrollbar ────────────────────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--c-bg); }
+    ::-webkit-scrollbar-thumb { background: var(--c-border); border-radius: 3px; }
+
+    /* ─── NAV ──────────────────────────────────────────────────────────── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 5vw;
+      height: 68px;
+      background: rgba(13,13,13,.85);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--c-border);
+      transition: background var(--transition);
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 1.35rem; font-weight: 800; letter-spacing: -.5px;
+    }
+    .nav-logo .dot { color: var(--c-accent); }
+    .logo-icon {
+      width: 34px; height: 34px;
+      background: var(--c-accent);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 900; font-size: .9rem; color: #fff;
+    }
+    .nav-links { display: flex; gap: 2rem; font-size: .9rem; font-weight: 500; color: var(--c-muted); }
+    .nav-links a:hover { color: var(--c-text); transition: color var(--transition); }
+    .nav-cta {
+      background: var(--c-accent); color: #fff;
+      padding: .45rem 1.2rem; border-radius: 8px;
+      font-size: .875rem; font-weight: 600;
+      transition: background var(--transition);
+    }
+    .nav-cta:hover { background: var(--c-accent2); }
+    .nav-hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+    .nav-hamburger span { display: block; width: 24px; height: 2px; background: var(--c-text); border-radius: 2px; transition: var(--transition); }
+
+    /* ─── HERO ─────────────────────────────────────────────────────────── */
+    .hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center;
+      padding: 120px 5vw 80px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-grid {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(232,78,27,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(232,78,27,.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+    }
+    .hero-glow {
+      position: absolute; top: 20%; left: 50%; transform: translateX(-50%);
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(232,78,27,.18) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(232,78,27,.12); border: 1px solid rgba(232,78,27,.3);
+      color: var(--c-accent2); font-size: .8rem; font-weight: 600;
+      padding: .35rem 1rem; border-radius: 999px;
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+    .badge-dot { width: 6px; height: 6px; background: var(--c-accent); border-radius: 50%; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+    .hero h1 {
+      font-size: clamp(2.4rem, 6vw, 5rem);
+      font-weight: 800;
+      line-height: 1.08;
+      letter-spacing: -2px;
+      position: relative;
+      max-width: 900px;
+    }
+    .hero h1 .highlight { color: var(--c-accent); }
+    .hero-sub {
+      margin-top: 1.5rem;
+      font-size: clamp(.95rem, 2vw, 1.2rem);
+      color: var(--c-muted);
+      max-width: 600px;
+      position: relative;
+    }
+    .hero-actions {
+      display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;
+      margin-top: 2.5rem;
+      position: relative;
+    }
+    .btn-primary {
+      background: var(--c-accent); color: #fff;
+      padding: .75rem 2rem; border-radius: 10px;
+      font-weight: 700; font-size: 1rem;
+      transition: background var(--transition), transform var(--transition);
+      cursor: pointer; border: none;
+    }
+    .btn-primary:hover { background: var(--c-accent2); transform: translateY(-2px); }
+    .btn-secondary {
+      background: transparent; color: var(--c-text);
+      border: 1px solid var(--c-border);
+      padding: .75rem 2rem; border-radius: 10px;
+      font-weight: 600; font-size: 1rem;
+      transition: border-color var(--transition), transform var(--transition);
+      cursor: pointer;
+    }
+    .btn-secondary:hover { border-color: var(--c-accent); transform: translateY(-2px); }
+    .hero-stats {
+      display: flex; gap: 3rem; flex-wrap: wrap; justify-content: center;
+      margin-top: 4rem;
+      position: relative;
+    }
+    .stat { text-align: center; }
+    .stat-num { font-size: 2rem; font-weight: 800; color: var(--c-accent); }
+    .stat-label { font-size: .8rem; color: var(--c-muted); text-transform: uppercase; letter-spacing: 1px; }
+
+    /* ─── SECTION SHARED ────────────────────────────────────────────────── */
+    section { padding: 96px 5vw; }
+    .section-label {
+      font-size: .75rem; font-weight: 700; letter-spacing: 3px;
+      text-transform: uppercase; color: var(--c-accent);
+      margin-bottom: .75rem;
+    }
+    .section-title {
+      font-size: clamp(1.6rem, 3.5vw, 2.8rem);
+      font-weight: 800; letter-spacing: -1px;
+      line-height: 1.15;
+    }
+    .section-sub {
+      color: var(--c-muted); margin-top: .75rem;
+      font-size: 1rem; max-width: 560px;
+    }
+    .section-header { margin-bottom: 3.5rem; }
+
+    /* ─── FEATURES ─────────────────────────────────────────────────────── */
+    #features { background: var(--c-bg2); }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+      gap: 1.5rem;
+    }
+    .feature-card {
+      background: var(--c-bg3);
+      border: 1px solid var(--c-border);
+      border-radius: var(--radius);
+      padding: 2rem;
+      transition: border-color var(--transition), transform var(--transition);
+    }
+    .feature-card:hover { border-color: var(--c-accent); transform: translateY(-4px); }
+    .feature-icon {
+      width: 48px; height: 48px;
+      background: rgba(232,78,27,.12);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem;
+      margin-bottom: 1.25rem;
+    }
+    .feature-card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: .5rem; }
+    .feature-card p { font-size: .9rem; color: var(--c-muted); line-height: 1.65; }
+
+    /* ─── HOW IT WORKS ─────────────────────────────────────────────────── */
+    #how { background: var(--c-bg); }
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 2rem;
+      counter-reset: step;
+    }
+    .step {
+      display: flex; flex-direction: column; gap: .75rem;
+      position: relative;
+    }
+    .step-num {
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      background: var(--c-accent);
+      color: #fff;
+      font-weight: 800; font-size: 1rem;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .step h3 { font-size: 1rem; font-weight: 700; }
+    .step p { font-size: .88rem; color: var(--c-muted); }
+
+    /* ─── USE CASES ────────────────────────────────────────────────────── */
+    #usecases { background: var(--c-bg2); }
+    .cases-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+    .case-card {
+      background: var(--c-bg3);
+      border: 1px solid var(--c-border);
+      border-radius: var(--radius);
+      padding: 2rem;
+      transition: border-color var(--transition);
+    }
+    .case-card:hover { border-color: rgba(232,78,27,.5); }
+    .case-tag {
+      display: inline-block;
+      background: rgba(232,78,27,.12);
+      color: var(--c-accent2);
+      font-size: .72rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 1px;
+      padding: .2rem .65rem; border-radius: 999px;
+      margin-bottom: 1rem;
+    }
+    .case-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: .5rem; }
+    .case-card p { font-size: .88rem; color: var(--c-muted); }
+
+    /* ─── CTA SECTION ──────────────────────────────────────────────────── */
+    #cta {
+      background: var(--c-bg);
+      display: flex; flex-direction: column; align-items: center;
+      text-align: center;
+    }
+    .cta-box {
+      background: linear-gradient(135deg, rgba(232,78,27,.15) 0%, rgba(232,78,27,.05) 100%);
+      border: 1px solid rgba(232,78,27,.25);
+      border-radius: 20px;
+      padding: 4rem 3rem;
+      max-width: 720px; width: 100%;
+    }
+    .cta-box h2 { font-size: clamp(1.6rem, 4vw, 2.5rem); font-weight: 800; letter-spacing: -1px; margin-bottom: 1rem; }
+    .cta-box p { color: var(--c-muted); font-size: 1rem; margin-bottom: 2rem; }
+
+    /* ─── FOOTER ───────────────────────────────────────────────────────── */
+    footer {
+      background: var(--c-bg2);
+      border-top: 1px solid var(--c-border);
+      padding: 3rem 5vw 2rem;
+    }
+    .footer-top {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      flex-wrap: wrap; gap: 2rem;
+      padding-bottom: 2.5rem;
+      border-bottom: 1px solid var(--c-border);
+    }
+    .footer-brand .nav-logo { margin-bottom: .75rem; }
+    .footer-brand p { font-size: .85rem; color: var(--c-muted); max-width: 280px; }
+    .footer-links h4 { font-size: .8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: var(--c-muted); margin-bottom: 1rem; }
+    .footer-links ul { list-style: none; display: flex; flex-direction: column; gap: .5rem; }
+    .footer-links ul li a { font-size: .875rem; color: var(--c-muted); transition: color var(--transition); }
+    .footer-links ul li a:hover { color: var(--c-text); }
+    .footer-bottom {
+      padding-top: 1.5rem;
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 1rem;
+      font-size: .8rem; color: var(--c-muted);
+    }
+    .footer-bottom a:hover { color: var(--c-text); }
+
+    /* ─── CHAT WIDGET ──────────────────────────────────────────────────── */
+    #chat-widget {
+      position: fixed; bottom: 24px; right: 24px; z-index: 9999;
+      display: flex; flex-direction: column; align-items: flex-end;
+      gap: 12px;
+    }
+    #chat-toggle {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      background: var(--c-accent);
+      border: none; cursor: pointer;
+      box-shadow: 0 6px 24px rgba(232,78,27,.5);
+      display: flex; align-items: center; justify-content: center;
+      transition: background var(--transition), transform var(--transition);
+      color: #fff;
+      flex-shrink: 0;
+    }
+    #chat-toggle:hover { background: var(--c-accent2); transform: scale(1.08); }
+    #chat-toggle svg { width: 24px; height: 24px; }
+    #chat-window {
+      width: 370px;
+      max-width: calc(100vw - 48px);
+      height: 520px;
+      max-height: calc(100vh - 100px);
+      background: var(--c-bg2);
+      border: 1px solid var(--c-border);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      display: flex; flex-direction: column;
+      overflow: hidden;
+      opacity: 0; pointer-events: none;
+      transform: translateY(16px) scale(.97);
+      transition: opacity .25s ease, transform .25s ease;
+    }
+    #chat-window.open {
+      opacity: 1; pointer-events: all;
+      transform: translateY(0) scale(1);
+    }
+
+    /* Chat Header */
+    .chat-header {
+      background: var(--c-bg3);
+      border-bottom: 1px solid var(--c-border);
+      padding: 1rem 1.25rem;
+      display: flex; align-items: center; gap: .75rem;
+      flex-shrink: 0;
+    }
+    .chat-avatar {
+      width: 38px; height: 38px; border-radius: 50%;
+      background: var(--c-accent);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: .9rem; color: #fff;
+      flex-shrink: 0;
+    }
+    .chat-header-info { flex: 1; }
+    .chat-header-name { font-size: .9rem; font-weight: 700; }
+    .chat-header-status {
+      display: flex; align-items: center; gap: 5px;
+      font-size: .72rem; color: #4ade80;
+    }
+    .status-dot { width: 6px; height: 6px; background: #4ade80; border-radius: 50%; }
+    .chat-close {
+      background: none; border: none; cursor: pointer;
+      color: var(--c-muted); font-size: 1.2rem;
+      padding: 4px; border-radius: 6px;
+      transition: color var(--transition);
+      line-height: 1;
+    }
+    .chat-close:hover { color: var(--c-text); }
+
+    /* Chat Messages */
+    #chat-messages {
+      flex: 1; overflow-y: auto;
+      padding: 1rem;
+      display: flex; flex-direction: column; gap: .75rem;
+      scroll-behavior: smooth;
+    }
+    #chat-messages::-webkit-scrollbar { width: 4px; }
+    #chat-messages::-webkit-scrollbar-thumb { background: var(--c-border); border-radius: 2px; }
+
+    .msg {
+      display: flex;
+      flex-direction: column;
+      max-width: 82%;
+      gap: 3px;
+    }
+    .msg.user { align-self: flex-end; align-items: flex-end; }
+    .msg.bot  { align-self: flex-start; align-items: flex-start; }
+    .msg-bubble {
+      padding: .6rem .9rem;
+      border-radius: 14px;
+      font-size: .875rem;
+      line-height: 1.55;
+      word-break: break-word;
+    }
+    .msg.user .msg-bubble {
+      background: var(--c-accent);
+      color: #fff;
+      border-bottom-right-radius: 4px;
+    }
+    .msg.bot .msg-bubble {
+      background: var(--c-surface);
+      color: var(--c-text);
+      border-bottom-left-radius: 4px;
+    }
+    .msg-time {
+      font-size: .65rem; color: var(--c-muted);
+      padding: 0 4px;
+    }
+
+    /* Typing indicator */
+    .typing-indicator {
+      display: flex; align-items: center; gap: 4px;
+      padding: .6rem .9rem;
+      background: var(--c-surface);
+      border-radius: 14px; border-bottom-left-radius: 4px;
+      width: fit-content;
+    }
+    .typing-dot {
+      width: 6px; height: 6px; background: var(--c-muted);
+      border-radius: 50%;
+      animation: typing 1.4s infinite;
+    }
+    .typing-dot:nth-child(2) { animation-delay: .2s; }
+    .typing-dot:nth-child(3) { animation-delay: .4s; }
+    @keyframes typing { 0%,100%{opacity:.3;transform:translateY(0)} 50%{opacity:1;transform:translateY(-4px)} }
+
+    /* Chat Input */
+    .chat-footer {
+      border-top: 1px solid var(--c-border);
+      padding: .75rem 1rem;
+      display: flex; gap: .5rem; align-items: flex-end;
+      flex-shrink: 0;
+      background: var(--c-bg3);
+    }
+    #chat-input {
+      flex: 1;
+      background: var(--c-surface);
+      border: 1px solid var(--c-border);
+      border-radius: 10px;
+      color: var(--c-text);
+      font-family: var(--font);
+      font-size: .875rem;
+      padding: .55rem .85rem;
+      resize: none;
+      outline: none;
+      min-height: 40px;
+      max-height: 120px;
+      overflow-y: auto;
+      transition: border-color var(--transition);
+    }
+    #chat-input:focus { border-color: var(--c-accent); }
+    #chat-input::placeholder { color: var(--c-muted); }
+    #chat-send {
+      width: 40px; height: 40px; flex-shrink: 0;
+      background: var(--c-accent);
+      border: none; border-radius: 10px;
+      color: #fff; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background var(--transition), transform var(--transition);
+    }
+    #chat-send:hover { background: var(--c-accent2); transform: scale(1.05); }
+    #chat-send:disabled { background: var(--c-border); cursor: not-allowed; transform: none; }
+    #chat-send svg { width: 18px; height: 18px; }
+
+    /* ─── RESPONSIVE ────────────────────────────────────────────────────── */
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .nav-hamburger { display: flex; }
+      .nav-links.mobile-open {
+        display: flex; flex-direction: column;
+        position: fixed; top: 68px; left: 0; right: 0;
+        background: var(--c-bg2);
+        padding: 1.5rem 5vw;
+        border-bottom: 1px solid var(--c-border);
+        gap: 1.25rem;
+        z-index: 999;
+      }
+      .hero-stats { gap: 1.5rem; }
+      .cta-box { padding: 2.5rem 1.5rem; }
+      .footer-top { flex-direction: column; }
+      #chat-widget { bottom: 16px; right: 16px; }
+    }
+
+    /* ─── SCROLL ANIMATIONS ─────────────────────────────────────────────── */
+    .fade-up {
+      opacity: 0; transform: translateY(28px);
+      transition: opacity .6s ease, transform .6s ease;
+    }
+    .fade-up.visible { opacity: 1; transform: translateY(0); }
+	/* new */
+	/* ─── Chat Bubble Formatting ──────────────────────────────────────── */
+.msg.bot .msg-bubble ul,
+.msg.bot .msg-bubble ol {
+  margin: 0.4rem 0 0.4rem 1.2rem;
+  padding: 0;
+}
+
+.msg.bot .msg-bubble li {
+  margin-bottom: 0.25rem;
+  line-height: 1.5;
+}
+
+.msg.bot .msg-bubble strong {
+  color: var(--c-white);
+  font-weight: 700;
+}
+
+.msg.bot .msg-bubble em {
+  font-style: italic;
+  color: var(--c-muted);
+}
+
+.msg.bot .msg-bubble br {
+  display: block;
+  margin-bottom: 0.2rem;
+}
+
+  </style>
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════════
+       NAV
+  ══════════════════════════════════════════ -->
+  <nav id="navbar">
+    <a href="#" class="nav-logo">
+      <div class="logo-icon">W</div>
+      myWAI<span class="dot">.</span>
+    </a>
+    <div class="nav-links" id="navLinks">
+      <a href="#features">Features</a>
+      <a href="#how">So funktioniert's</a>
+      <a href="#usecases">Use Cases</a>
+      <a href="#cta">Kontakt</a>
+    </div>
+    <a href="#cta" class="nav-cta">Jetzt starten</a>
+    <div class="nav-hamburger" id="hamburger" aria-label="Menü öffnen" role="button" tabindex="0">
+      <span></span><span></span><span></span>
+    </div>
+  </nav>
+
+  <!-- ══════════════════════════════════════════
+       HERO
+  ══════════════════════════════════════════ -->
+  <section class="hero" id="home">
+    <div class="hero-grid"></div>
+    <div class="hero-glow"></div>
+
+    <div class="hero-badge fade-up">
+      <span class="badge-dot"></span>
+      KI-gestützte Unternehmensautomatisierung
+    </div>
+
+    <h1 class="fade-up" style="transition-delay:.1s">
+      Ihr intelligenter<br/><span class="highlight">KI-Assistent.</span><br/>Überall. Jetzt.
+    </h1>
+
+    <p class="hero-sub fade-up" style="transition-delay:.2s">
+      myWAI verbindet Ihre Mitarbeiter, Prozesse und Daten mit modernster KI –
+      sicher, skalierbar und sofort einsatzbereit.
+    </p>
+
+    <div class="hero-actions fade-up" style="transition-delay:.3s">
+      <button class="btn-primary" onclick="openChat()">Chat starten ›</button>
+      <a href="#features" class="btn-secondary">Mehr erfahren</a>
+    </div>
+
+    <div class="hero-stats fade-up" style="transition-delay:.45s">
+      <div class="stat">
+        <div class="stat-num">98%</div>
+        <div class="stat-label">Kundenzufriedenheit</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">3×</div>
+        <div class="stat-label">Schnellere Prozesse</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">24/7</div>
+        <div class="stat-label">Verfügbarkeit</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">100%</div>
+        <div class="stat-label">DSGVO-konform</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       FEATURES
+  ══════════════════════════════════════════ -->
+  <section id="features">
+    <div class="section-header fade-up">
+      <div class="section-label">Features</div>
+      <h2 class="section-title">Alles, was Ihr Unternehmen braucht.</h2>
+      <p class="section-sub">myWAI ist mehr als ein Chatbot – es ist Ihr digitaler Arbeitsassistent.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card fade-up">
+        <div class="feature-icon">🤖</div>
+        <h3>KI-gestützte Antworten</h3>
+        <p>Modernste Large Language Models liefern präzise, kontextbewusste Antworten auf Ihre Unternehmensfragen – in Sekunden.</p>
+      </div>
+      <div class="feature-card fade-up" style="transition-delay:.08s">
+        <div class="feature-icon">🔗</div>
+        <h3>Nahtlose Integrationen</h3>
+        <p>Verbinden Sie SAP, CRM, Datenbanken und interne Dokumente direkt mit Ihrem KI-Agenten – ohne Entwicklungsaufwand.</p>
+      </div>
+      <div class="feature-card fade-up" style="transition-delay:.16s">
+        <div class="feature-icon">🔒</div>
+        <h3>Enterprise-Security</h3>
+        <p>Ende-zu-Ende-Verschlüsselung, DSGVO-Konformität und On-Premise-Optionen sorgen für maximale Datensicherheit.</p>
+      </div>
+      <div class="feature-card fade-up" style="transition-delay:.24s">
+        <div class="feature-icon">⚡</div>
+        <h3>Sofort einsatzbereit</h3>
+        <p>Keine lange Implementierung. myWAI ist in wenigen Minuten konfiguriert und kann sofort mit Ihrem Team arbeiten.</p>
+      </div>
+      <div class="feature-card fade-up" style="transition-delay:.32s">
+        <div class="feature-icon">📊</div>
+        <h3>Analytics & Reporting</h3>
+        <p>Verstehen Sie, wie Ihr Team den Assistenten nutzt – mit detaillierten Auswertungen und Nutzungsstatistiken.</p>
+      </div>
+      <div class="feature-card fade-up" style="transition-delay:.4s">
+        <div class="feature-icon">🌍</div>
+        <h3>Mehrsprachig</h3>
+        <p>Unterstützt über 50 Sprachen. Ihr globales Team kommuniziert in der eigenen Muttersprache mit dem Assistenten.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       HOW IT WORKS
+  ══════════════════════════════════════════ -->
+  <section id="how">
+    <div class="section-header fade-up">
+      <div class="section-label">Ablauf</div>
+      <h2 class="section-title">So einfach funktioniert myWAI.</h2>
+      <p class="section-sub">In drei Schritten zur eigenen KI-gestützten Arbeitsumgebung.</p>
+    </div>
+    <div class="steps">
+      <div class="step fade-up">
+        <div class="step-num">1</div>
+        <h3>Konfigurieren</h3>
+        <p>Definieren Sie den Zweck Ihres Agenten, laden Sie Wissensdaten hoch und wählen Sie passende Integrationen aus.</p>
+      </div>
+      <div class="step fade-up" style="transition-delay:.1s">
+        <div class="step-num">2</div>
+        <h3>Verbinden</h3>
+        <p>Binden Sie den Agenten per Widget, API oder Direktlink in Ihre bestehenden Tools und Webseiten ein.</p>
+      </div>
+      <div class="step fade-up" style="transition-delay:.2s">
+        <div class="step-num">3</div>
+        <h3>Automatisieren</h3>
+        <p>Ihr KI-Assistent übernimmt Routineaufgaben, beantwortet Fragen und entlastet Ihr Team sofort.</p>
+      </div>
+      <div class="step fade-up" style="transition-delay:.3s">
+        <div class="step-num">4</div>
+        <h3>Optimieren</h3>
+        <p>Nutzen Sie Feedback und Analytics, um den Agenten kontinuierlich zu verbessern und neuen Anforderungen anzupassen.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       USE CASES
+  ══════════════════════════════════════════ -->
+  <section id="usecases">
+    <div class="section-header fade-up">
+      <div class="section-label">Use Cases</div>
+      <h2 class="section-title">Für jede Abteilung. Für jedes Ziel.</h2>
+      <p class="section-sub">myWAI passt sich Ihren Anforderungen an – branchenübergreifend und skalierbar.</p>
+    </div>
+    <div class="cases-grid">
+      <div class="case-card fade-up">
+        <span class="case-tag">HR</span>
+        <h3>Mitarbeiter-Onboarding</h3>
+        <p>Neue Mitarbeitende werden automatisch durch Prozesse geführt, erhalten Antworten auf häufige Fragen und finden sich schneller zurecht.</p>
+      </div>
+      <div class="case-card fade-up" style="transition-delay:.08s">
+        <span class="case-tag">IT</span>
+        <h3>IT-Support Automatisierung</h3>
+        <p>First-Level-Support rund um die Uhr: myWAI beantwortet IT-Anfragen, erstellt Tickets und eskaliert bei Bedarf automatisch.</p>
+      </div>
+      <div class="case-card fade-up" style="transition-delay:.16s">
+        <span class="case-tag">Sales</span>
+        <h3>Leadqualifizierung</h3>
+        <p>Qualifizieren Sie Interessenten automatisch, liefern Sie individuelle Produktempfehlungen und übergeben Sie heiße Leads an Ihr Vertriebsteam.</p>
+      </div>
+      <div class="case-card fade-up" style="transition-delay:.24s">
+        <span class="case-tag">SAP</span>
+        <h3>SAP-Wissensassistent</h3>
+        <p>Ihr KI-Assistent kennt Ihre SAP-Dokumentation und beantwortet Fragen zu Prozessen, Modulen und Konfigurationen auf Knopfdruck.</p>
+      </div>
+      <div class="case-card fade-up" style="transition-delay:.32s">
+        <span class="case-tag">Legal</span>
+        <h3>Vertragsprüfung & Compliance</h3>
+        <p>Dokumente werden automatisch analysiert, kritische Klauseln identifiziert und Compliance-Checks durchgeführt – in Minuten statt Tagen.</p>
+      </div>
+      <div class="case-card fade-up" style="transition-delay:.4s">
+        <span class="case-tag">Finance</span>
+        <h3>Finanzreporting</h3>
+        <p>Holen Sie sich auf Basis Ihrer Daten automatisch generierte Reports, Forecasts und Anomalie-Meldungen – direkt im Chat.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       CTA
+  ══════════════════════════════════════════ -->
+  <section id="cta">
+    <div class="cta-box fade-up">
+      <h2>Bereit für die nächste Stufe?</h2>
+      <p>Testen Sie myWAI noch heute – kostenlos und unverbindlich. Unser Team begleitet Sie bei jedem Schritt.</p>
+      <div style="display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;">
+        <button class="btn-primary" onclick="openChat()">Demo im Chat starten</button>
+        <a href="mailto:info@mywai.org" class="btn-secondary">Kontakt aufnehmen</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       FOOTER
+  ══════════════════════════════════════════ -->
+  <footer>
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="nav-logo" style="margin-bottom:.75rem">
+          <div class="logo-icon">W</div>
+          myWAI<span class="dot">.</span>
+        </div>
+        <p>myWAI – KI-Lösungen für moderne Unternehmen. Entwickelt in Partnerschaft mit Blick. GmbH.</p>
+      </div>
+      <div class="footer-links">
+        <h4>Produkt</h4>
+        <ul>
+          <li><a href="#features">Features</a></li>
+          <li><a href="#how">So funktioniert's</a></li>
+          <li><a href="#usecases">Use Cases</a></li>
+        </ul>
+      </div>
+      <div class="footer-links">
+        <h4>Unternehmen</h4>
+        <ul>
+          <li><a href="https://blickpunkt.io" target="_blank" rel="noopener">Blick. GmbH</a></li>
+          <li><a href="mailto:info@mywai.org">Kontakt</a></li>
+        </ul>
+      </div>
+      <div class="footer-links">
+        <h4>Rechtliches</h4>
+        <ul>
+          <li><a href="/impressum.html">Impressum</a></li>
+          <li><a href="/datenschutz.html">Datenschutz</a></li>
+          <li><a href="/agb.html">AGB</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 myWAI – powered by <a href="https://blickpunkt.io" target="_blank" rel="noopener" style="color:var(--c-accent)">Blick. GmbH</a></span>
+      <span>www.mywai.org</span>
+    </div>
+  </footer>
+
+  <!-- ══════════════════════════════════════════
+       CHAT WIDGET
+  ══════════════════════════════════════════ -->
+  <div id="chat-widget">
+    <!-- Chat Window -->
+    <div id="chat-window" role="dialog" aria-label="KI-Assistent Chat">
+      <div class="chat-header">
+        <div class="chat-avatar">W</div>
+        <div class="chat-header-info">
+          <div class="chat-header-name">myWAI Assistent</div>
+          <div class="chat-header-status">
+            <span class="status-dot"></span> Online
+          </div>
+        </div>
+        <button class="chat-close" id="chatClose" aria-label="Chat schließen">✕</button>
+      </div>
+
+      <div id="chat-messages" role="log" aria-live="polite"></div>
+
+      <div class="chat-footer">
+        <textarea
+          id="chat-input"
+          placeholder="Nachricht eingeben …"
+          rows="1"
+          aria-label="Nachricht eingeben"
+        ></textarea>
+        <button id="chat-send" aria-label="Nachricht senden">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="22" y1="2" x2="11" y2="13"></line>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Toggle Button -->
+    <button id="chat-toggle" aria-label="Chat öffnen / schließen" title="KI-Assistent">
+      <!-- Chat Icon -->
+      <svg id="icon-chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+      </svg>
+      <!-- Close Icon (hidden by default) -->
+      <svg id="icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       JAVASCRIPT
+  ══════════════════════════════════════════ -->
+  <script>
+    /* ── Configuration ──────────────────────────────────────────────────
+       Replace these placeholders server-side (e.g. via PHP, a build
+       script, or a proxy) before deploying to production.
+       NEVER expose real API keys in client-side JavaScript!
+    ───────────────────────────────────────────────────────────────────── */
+   // const LANGDOCK_API_KEY  = "PLACEHOLDER_API_KEY";   // ← replace via proxy/env
+   // const LANGDOCK_API_KEY = process.env.LANGDOCK_API_KEY;
+	//const LANGDOCK_AGENT_ID = "PLACEHOLDER_AGENT_ID";  // ← replace via proxy/env
+    // const LANGDOCK_API_URL  = "https://api.langdock.com/agent/v1/chat/completions";
+	const LANGDOCK_API_URL = "/proxy.php";
+    // LANGDOCK_API_KEY kann dann leer bleiben (wird im Proxy gesetzt)
+
+
+    /* ── Chat State ───────────────────────────────────────────────────── */
+    const conversationHistory = [];
+    let isLoading = false;
+
+    /* ── DOM refs ─────────────────────────────────────────────────────── */
+    const chatWindow   = document.getElementById("chat-window");
+    const chatToggle   = document.getElementById("chat-toggle");
+    const chatClose    = document.getElementById("chatClose");
+    const chatMessages = document.getElementById("chat-messages");
+    const chatInput    = document.getElementById("chat-input");
+    const chatSend     = document.getElementById("chat-send");
+    const iconChat     = document.getElementById("icon-chat");
+    const iconClose    = document.getElementById("icon-close");
+
+    /* ── Helpers ──────────────────────────────────────────────────────── */
+    function getTime() {
+      return new Date().toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" });
+    }
+
+    /* ── Markdown-ähnliche Formatierung ──────────────────────────────── */
+function formatText(raw) {
+  let text = raw;
+
+  // 【...】 Quellenangaben entfernen
+  text = text.replace(/【[^】]*】/g, '');
+
+  // **fett**
+  text = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+
+  // *kursiv*
+  text = text.replace(/\*(.+?)\*/g, '<em>$1</em>');
+
+  // Aufzählungslisten: Zeilen die mit "- " beginnen
+  text = text.replace(/((?:^|\n)- .+)+/g, (block) => {
+    const items = block.trim().split('\n').map(line =>
+      `<li>${line.replace(/^- /, '').trim()}</li>`
+    ).join('');
+    return `<ul>${items}</ul>`;
+  });
+
+  // Nummerierte Listen: Zeilen die mit "1. " etc. beginnen
+  text = text.replace(/((?:^|\n)\d+\. .+)+/g, (block) => {
+    const items = block.trim().split('\n').map(line =>
+      `<li>${line.replace(/^\d+\. /, '').trim()}</li>`
+    ).join('');
+    return `<ol>${items}</ol>`;
+  });
+
+  // Zeilenumbrüche → <br> (außerhalb von Listen)
+  text = text.replace(/\n(?!<\/?(ul|ol|li))/g, '<br>');
+
+  return text.trim();
+}
+
+/* ── appendMessage (ersetzt die alte Version) ────────────────────── */
+function appendMessage(role, text) {
+  const msg = document.createElement('div');
+  msg.className = `msg ${role}`;
+
+  const bubble = document.createElement('div');
+  bubble.className = 'msg-bubble';
+
+  if (role === 'bot') {
+    bubble.innerHTML = formatText(text);   // ← bot bekommt formattierten HTML
+  } else {
+    bubble.textContent = text;             // ← user bleibt plain text (sicherer)
+  }
+
+  const time = document.createElement('div');
+  time.className = 'msg-time';
+  time.textContent = getTime();
+
+  msg.appendChild(bubble);
+  msg.appendChild(time);
+  chatMessages.appendChild(msg);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+  return msg;
+}
+
+
+    function showTyping() {
+      const wrapper = document.createElement("div");
+      wrapper.className = "msg bot";
+      wrapper.id = "typing-wrapper";
+      const indicator = document.createElement("div");
+      indicator.className = "typing-indicator";
+      indicator.innerHTML = `<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>`;
+      wrapper.appendChild(indicator);
+      chatMessages.appendChild(wrapper);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function removeTyping() {
+      const el = document.getElementById("typing-wrapper");
+      if (el) el.remove();
+    }
+
+    /* ── Open / Close ─────────────────────────────────────────────────── */
+    function openChat() {
+      chatWindow.classList.add("open");
+      iconChat.style.display  = "none";
+      iconClose.style.display = "block";
+      chatInput.focus();
+      if (chatMessages.childElementCount === 0) {
+        setTimeout(() => {
+          appendMessage("bot", "Hallo! Ich bin Ihr myWAI-Assistent. Wie kann ich Ihnen heute helfen?");
+        }, 300);
+      }
+    }
+
+    function closeChat() {
+      chatWindow.classList.remove("open");
+      iconChat.style.display  = "block";
+      iconClose.style.display = "none";
+    }
+
+    chatToggle.addEventListener("click", () => {
+      chatWindow.classList.contains("open") ? closeChat() : openChat();
+    });
+    chatClose.addEventListener("click", closeChat);
+
+    /* ── Send Message ─────────────────────────────────────────────────── */
+/* ── Send Message ─────────────────────────────────────────────────── */
+async function callMyAgent(userText) {
+  const response = await fetch('/proxy.php', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      messages: [
+        {
+          id: 'msg_' + Date.now(),
+          role: 'user',
+          parts: [
+            {
+              type: 'text',
+              text: userText,
+            },
+          ],
+        },
+      ],
+    }),
+  });
+
+  if (!response.ok) {
+    const errText = await response.text();
+    console.error('API error response:', errText);
+    throw new Error('Request failed with status ' + response.status);
+  }
+
+  return await response.json();
+}
+
+async function handleSend() {
+  const text = chatInput.value.trim();   // ← Bug 1 fix: text auslesen
+  if (!text) return;                     // ← Bug 2 fix: leere Eingabe abfangen
+  if (isLoading) return;                 // ← Doppelklick verhindern
+
+  // User-Nachricht im Chat anzeigen
+  appendMessage('user', text);
+  chatInput.value = '';
+  chatInput.style.height = '40px';
+
+  // Lade-Zustand aktivieren
+  isLoading = true;
+  chatSend.disabled = true;             // ← Bug 3 fix
+  showTyping();
+
+  try {
+    const result = await callMyAgent(text);
+    console.log('Agent response:', result);
+
+    let answer = 'Entschuldigung, ich habe gerade keine Antwort erhalten.';
+
+    if (result && Array.isArray(result.messages) && result.messages.length > 0) {
+      const last = result.messages[result.messages.length - 1];
+
+      if (Array.isArray(last.parts)) {
+        const textPart = last.parts.find(p => p.type === 'text');
+        if (textPart && textPart.text) {
+          answer = textPart.text;
+        }
+      } else if (typeof last.content === 'string') {
+        // Fallback falls API doch content zurückgibt
+        answer = last.content;
+      }
+    }
+
+    removeTyping();
+    appendMessage('bot', answer);
+
+  } catch (err) {
+    console.error('handleSend error:', err);
+    removeTyping();
+    appendMessage('bot', 'Entschuldigung, es ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut.');
+  } finally {
+    isLoading = false;
+    chatSend.disabled = false;           // Button wieder freigeben
+  }
+}
+
+// Klick auf den Senden-Button
+chatSend.addEventListener('click', handleSend);
+
+// Enter im Textfeld (Shift+Enter = Zeilenumbruch)
+chatInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    handleSend();
+  }
+});
+
+/* Auto-resize textarea */
+chatInput.addEventListener('input', () => {
+  chatInput.style.height = 'auto';
+  chatInput.style.height = Math.min(chatInput.scrollHeight, 120) + 'px';
+});
+
+/* ── Scroll animations ────────────────────────────────────────────── */
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+/* ── Mobile nav ────────────────────────────────────────────────────── */
+const hamburger = document.getElementById('hamburger');
+const navLinks  = document.getElementById('navLinks');
+hamburger.addEventListener('click', () => {
+  navLinks.classList.toggle('mobile-open');
+});
+hamburger.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' || e.key === ' ') navLinks.classList.toggle('mobile-open');
+});
+navLinks.querySelectorAll('a').forEach(a => {
+  a.addEventListener('click', () => navLinks.classList.remove('mobile-open'));
+});
+
+  </script>
+</body>
+</html>
